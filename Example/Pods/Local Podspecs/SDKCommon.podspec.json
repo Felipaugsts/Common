@@ -1,0 +1,22 @@
+{
+  "name": "SDKCommon",
+  "version": "0.1.0",
+  "summary": "A short description of SDKCommon.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/Felipe Augusto Silva/SDKCommon",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Felipe Augusto Silva": "felipeas@ciant.com"
+  },
+  "source": {
+    "git": "https://github.com/Felipe Augusto Silva/SDKCommon.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source_files": "SDKCommon/Classes/**/*"
+}

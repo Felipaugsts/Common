@@ -7,17 +7,19 @@
 //
 
 import UIKit
+import SDKCommon
 
 class ViewController: UIViewController {
 
+    let viewModel = ViewModel()
+    private var disposableBag = DisposeBag()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        viewModel.skeletons.subscribe { value, _ in
+            self.view.backgroundColor = .red
+        }.disposed(by: &disposableBag)
+        viewModel.updateRoutes()
     }
 
 }
