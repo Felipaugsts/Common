@@ -9,77 +9,73 @@ import Foundation
 
     // Starts with an initial value and replays it or the latest element to new subscribers.
 public final class BehaviorRelay<T>: Observable<T> {
-        // MARK: - Public properties
+    // MARK: - Public properties
 
-        // The current (read- and writeable) value of the variable.
+    // The current (read- and writeable) value of the variable.
     override public var value: Value {
         get { _value }
         set { _value = newValue }
     }
 
-        // MARK: - Private properties
+    // MARK: - Private properties
 
-        // The storage for our computed property.
+    // The storage for our computed property.
     private var _value: Value {
         didSet {
             notifyObserver(with: value, from: oldValue)
         }
     }
 
-        // MARK: - Initializer
+    // MARK: - Initializer
 
-        /// - Note: We keep the initializer to the super class `Observable`
-        /// fileprivate in order to verify always having a value.
+    /// - Note: We keep the initializer to the super class `Observable`
+    /// fileprivate in order to verify always having a value.
     public init(_ value: Value) {
         _value = value
 
         super.init()
     }
 
-        // MARK: - Public methods
+    // MARK: - Public methods
     override public func subscribe(_ observer: @escaping Observer) -> Disposable {
-            // A variable should inform the observer with the initial value.
+        // A variable should inform the observer with the initial value.
         observer(_value, nil)
 
         return super.subscribe(observer)
     }
 }
 
-    // Starts empty and only emits new elements to subscribers.
+// Starts empty and only emits new elements to subscribers.
 public final class PublishRelay<T>: Observable<T> {
-        // MARK: - Public properties
+    // MARK: - Public properties
 
-        /// The current (readonly) value of the observable (if available).
+    /// The current (readonly) value of the observable (if available).
     override public var value: Value? {
         _value
     }
 
-        // MARK: - Private properties
+    // MARK: - Private properties
     private var _value: Value?
 
-        // MARK: - Initializer
+    // MARK: - Initializer
 
     override public init() {
         super.init()
     }
 
-        // MARK: - Public methods
-        /// Updates the publish subject using the given value.
+    // MARK: - Public methods
+    /// Updates the publish subject using the given value.
     public func update(_ value: Value) {
         let oldValue = _value
         _value = value
 
-            /// We inform the observer here instead of using `didSet` on `_value`
-            /// to prevent unwrapping an optional (`_value` is nullable, as we're starting empty).
-            /// Unwrapping lead to issues / crashes on having an underlying optional type, e.g. `PublishRelay<Int?>`.
+        /// We inform the observer here instead of using `didSet` on `_value`
+        /// to prevent unwrapping an optional (`_value` is nullable, as we're starting empty).
+        /// Unwrapping lead to issues / crashes on having an underlying optional type, e.g. `PublishRelay<Int?>`.
         notifyObserver(with: value, from: oldValue)
     }
 }
 
-    /// - Remark: I'd prefer having a protocol definition here, but casting an instance
-    /// with a generic (e.g. `BehaviorRelay<Int>(0)`) to a protocol
-    ///           with an associated type (`Observable<Int>`) doesn't work yet.
-    ///           Therefore we use an "abstract" class as a workaround.
 public class Observable<T> {
         // MARK: - Types
     public typealias Value = T

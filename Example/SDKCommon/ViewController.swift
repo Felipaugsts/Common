@@ -16,10 +16,11 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.skeletons.subscribe { value, _ in
-            self.view.backgroundColor = .red
+        viewModel.backgroundColor.subscribe { value, _ in
+            self.view.backgroundColor = value
         }.disposed(by: &disposableBag)
-        viewModel.updateRoutes()
+
+        viewModel.updateBackground(color: .blue)
     }
 
 }

@@ -1,19 +1,18 @@
 {
   "name": "SDKCommon",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "summary": "A short description of SDKCommon.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/Felipe Augusto Silva/SDKCommon",
+  "homepage": "https://github.com/Felipaugsts/Common",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
   "authors": {
-    "Felipe Augusto Silva": "felipeas@ciant.com"
+    "Felipe Augusto Silva": ""
   },
   "source": {
-    "git": "https://github.com/Felipe Augusto Silva/SDKCommon.git",
-    "tag": "0.1.0"
+    "git": "git@github.com:Felipaugsts/Common.git",
+    "tag": "0.0.1"
   },
   "platforms": {
     "ios": "10.0"

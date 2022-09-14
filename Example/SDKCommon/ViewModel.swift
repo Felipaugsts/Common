@@ -8,17 +8,17 @@
 
 import Foundation
 import SDKCommon
+import UIKit
 
-protocol viewmodelProtocol: AnyObject {
-    var skeletons: PublishRelay<String> { get }
+protocol viewModelProtocol: AnyObject {
+    var backgroundColor: PublishRelay<UIColor> { get }
 }
 
-class ViewModel: viewmodelProtocol {
-    var skeletons = PublishRelay<String>()
+class ViewModel: viewModelProtocol {
+    var backgroundColor = PublishRelay<UIColor>()
 
-    func updateRoutes() {
-        let test = "test123"
-        self.skeletons.update(test)
+    func updateBackground(color: UIColor) {
+        self.backgroundColor.update(color)
     }
 }
 
