@@ -20,6 +20,12 @@ class ViewController: UIViewController {
             self.view.backgroundColor = value
         }.disposed(by: &disposableBag)
 
+        viewModel.dynamicVariable.bind { value in
+            if value {
+                print("dynamic variable value changed to \(value)")
+            }
+        }
+
         viewModel.updateBackground(color: .blue)
     }
 

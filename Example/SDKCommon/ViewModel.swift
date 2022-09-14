@@ -16,9 +16,11 @@ protocol viewModelProtocol: AnyObject {
 
 class ViewModel: viewModelProtocol {
     var backgroundColor = PublishRelay<UIColor>()
+    var dynamicVariable = Dynamic<Bool>(false)
 
     func updateBackground(color: UIColor) {
         self.backgroundColor.update(color)
+        dynamicVariable.value = true
     }
 }
 
