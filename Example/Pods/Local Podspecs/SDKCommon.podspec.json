@@ -17,5 +17,13 @@
   "platforms": {
     "ios": "10.0"
   },
-  "source_files": "SDKCommon/Classes/**/*"
+  "source_files": "SDKCommon/Classes/**/*",
+  "dependencies": {
+    "SwinjectAutoregistration": [
+
+    ],
+    "Swinject": [
+
+    ]
+  }
 }
