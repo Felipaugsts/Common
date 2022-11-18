@@ -9,11 +9,11 @@ import Foundation
 import Swinject
 import SwinjectAutoregistration
 
-public final class BeesAssembler {
+public final class AppAssembler {
     
     // MARK: - Public static
     
-    private(set) static var shared = BeesAssembler()
+    private(set) static var shared = AppAssembler()
     
     // MARK: - Private constants
     
@@ -131,42 +131,42 @@ public final class BeesAssembler {
         
         /// Thread safety (synchronized) version of the `resolve`.
         public static func resolve<Service>(_ serviceType: Service.Type) -> Service {
-            BeesAssembler.resolve(serviceType)
+            AppAssembler.resolve(serviceType)
         }
         
         /// Thread safety (synchronized) version of the `resolveOptional`.
         public static func resolveOptional<Service>(_ serviceType: Service.Type) -> Service? {
-            BeesAssembler.resolveOptional(serviceType)
+            AppAssembler.resolveOptional(serviceType)
         }
         
         /// Thread safety (synchronized) version of the `resolve`.
         public static func resolve<Service>(_ serviceType: Service.Type, name: String) -> Service {
-            BeesAssembler.resolve(serviceType, name: name)
+            AppAssembler.resolve(serviceType, name: name)
         }
         
         /// Thread safety (synchronized) version of the `resolveOptional`.
         public static func resolveOptional<Service>(_ serviceType: Service.Type, name: String) -> Service? {
-            BeesAssembler.resolveOptional(serviceType, name: name)
+            AppAssembler.resolveOptional(serviceType, name: name)
         }
         
         /// Thread safety (synchronized) version of the `resolve`.
         public static func resolve<Service, Arg1>(_ serviceType: Service.Type, argument arg1: Arg1) -> Service {
-            BeesAssembler.resolve(serviceType, argument: arg1)
+            AppAssembler.resolve(serviceType, argument: arg1)
         }
         
         /// Thread safety (synchronized) version of the `resolveOptional`.
         public static func resolveOptional<Service, Arg1>(_ serviceType: Service.Type, argument arg1: Arg1) -> Service? {
-            BeesAssembler.resolveOptional(serviceType, argument: arg1)
+            AppAssembler.resolveOptional(serviceType, argument: arg1)
         }
         
         /// Thread safety (synchronized) version of the `resolve`.
         public static func resolve<Service, Arg1, Arg2>(_ serviceType: Service.Type, arguments arg1: Arg1, _ arg2: Arg2) -> Service {
-            BeesAssembler.resolve(serviceType, arguments: arg1, arg2)
+            AppAssembler.resolve(serviceType, arguments: arg1, arg2)
         }
         
         /// Thread safety (synchronized) version of the `resolveOptional`.
         public static func resolveOptional<Service, Arg1, Arg2>(_ serviceType: Service.Type, arguments arg1: Arg1, _ arg2: Arg2) -> Service? {
-            BeesAssembler.resolveOptional(serviceType, arguments: arg1, arg2)
+            AppAssembler.resolveOptional(serviceType, arguments: arg1, arg2)
         }
     }
 }

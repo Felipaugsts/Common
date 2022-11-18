@@ -27,6 +27,7 @@ class ViewController: UIViewController {
         }
 
         viewModel.updateBackground(color: .blue)
+        viewModel.fetchData()
     }
 
 }
