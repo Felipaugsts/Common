@@ -8,6 +8,8 @@
 import Foundation
 import Swinject
 
+public typealias AppsContainer = Container
+
 public protocol AppAssembly {
 	/// Provide hook for `Assembler` to load Services into the provided container
 	///

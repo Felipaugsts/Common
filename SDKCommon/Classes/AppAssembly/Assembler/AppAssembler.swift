@@ -68,46 +68,6 @@ public final class AppAssembler {
         shared.container.synchronize().resolve(serviceType, name: name)
     }
     
-    /// Retrieves the instance with the specified service type.
-    /// - Parameters:
-    ///   - serviceType: The service type to resolve.
-    ///   - arg1: 1 argument to pass to the factory closure.
-    /// - Returns: The resolved service type instance, or nil if no registration for the service type
-    ///            and 1 argument is found in the `Container`.
-    public static func resolve<Service, Arg1>(_ serviceType: Service.Type, argument arg1: Arg1) -> Service {
-        unwrap(resolveOptional(serviceType, argument: arg1))
-    }
-    
-    public static func resolveOptional<Service, Arg1>(_ serviceType: Service.Type, argument arg1: Arg1) -> Service? {
-        shared.container.synchronize().resolve(serviceType, argument: arg1)
-    }
-    
-    /// Retrieves the instance with the specified service type.
-    /// - Parameters:
-    ///   - serviceType: The service type to resolve.
-    ///   - arg1: 1 argument to pass to the factory closure.
-    ///   - arg2: 2 argument to pass to the factory closure.
-    /// - Returns: The resolved service type instance, or nil if no registration for the service type
-    ///            and 1 argument is found in the `Container`.
-    public static func resolve<Service, Arg1, Arg2>(_ serviceType: Service.Type, arguments arg1: Arg1, _ arg2: Arg2) -> Service {
-        unwrap(resolveOptional(serviceType, arguments: arg1, arg2))
-    }
-    
-    /// Retrieves the instance with the specified service type.
-    /// - Parameters:
-    ///   - serviceType: The service type to resolve.
-    ///   - arg1: 1 argument to pass to the factory closure.
-    ///   - name: Differentiate when you have multiple registered implementations for the same protocol
-    /// - Returns: The resolved service type instance, or nil if no registration for the service type
-    ///            and 1 argument is found in the `Container`.
-    public static func resolve<Service, Arg1>(_ serviceType: Service.Type, name: String, argument arg1: Arg1) -> Service {
-        unwrap(shared.container.synchronize().resolve(serviceType, name: name, argument: arg1))
-    }
-    
-    public static func resolveOptional<Service, Arg1, Arg2>(_ serviceType: Service.Type, arguments arg1: Arg1, _ arg2: Arg2) -> Service? {
-        shared.container.synchronize().resolve(serviceType, arguments: arg1, arg2)
-    }
-    
     /// Be EXTREMLY careful using this function!!! All instances registered for all scopes will be `DISCARDED`!
     public static func reset() {
         shared.container.removeAll()
@@ -120,53 +80,5 @@ public final class AppAssembler {
             preconditionFailure("Wasn't possible to resolve \(Service.self). Check the registration in your assembly!")
         }
         return service
-    }
-    
-    // MARK: - Synchronized
-    
-    // swiftlint:disable type_name
-    @available(*, deprecated, message: "synchronized is deprecated, please use resolve directly")
-    public struct synchronized {
-        // swiftlint:enable type_name
-        
-        /// Thread safety (synchronized) version of the `resolve`.
-        public static func resolve<Service>(_ serviceType: Service.Type) -> Service {
-            AppAssembler.resolve(serviceType)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolveOptional`.
-        public static func resolveOptional<Service>(_ serviceType: Service.Type) -> Service? {
-            AppAssembler.resolveOptional(serviceType)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolve`.
-        public static func resolve<Service>(_ serviceType: Service.Type, name: String) -> Service {
-            AppAssembler.resolve(serviceType, name: name)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolveOptional`.
-        public static func resolveOptional<Service>(_ serviceType: Service.Type, name: String) -> Service? {
-            AppAssembler.resolveOptional(serviceType, name: name)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolve`.
-        public static func resolve<Service, Arg1>(_ serviceType: Service.Type, argument arg1: Arg1) -> Service {
-            AppAssembler.resolve(serviceType, argument: arg1)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolveOptional`.
-        public static func resolveOptional<Service, Arg1>(_ serviceType: Service.Type, argument arg1: Arg1) -> Service? {
-            AppAssembler.resolveOptional(serviceType, argument: arg1)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolve`.
-        public static func resolve<Service, Arg1, Arg2>(_ serviceType: Service.Type, arguments arg1: Arg1, _ arg2: Arg2) -> Service {
-            AppAssembler.resolve(serviceType, arguments: arg1, arg2)
-        }
-        
-        /// Thread safety (synchronized) version of the `resolveOptional`.
-        public static func resolveOptional<Service, Arg1, Arg2>(_ serviceType: Service.Type, arguments arg1: Arg1, _ arg2: Arg2) -> Service? {
-            AppAssembler.resolveOptional(serviceType, arguments: arg1, arg2)
-        }
     }
 }
