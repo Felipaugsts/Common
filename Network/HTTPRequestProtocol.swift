@@ -13,7 +13,7 @@ public protocol HTTPRequestProtocol {
 
 public class DefaultHTTPRequest: HTTPRequestProtocol {
 
-    /// <#Description#>
+    /// Method used to fetch an API returning a Model
     /// - Parameters:
     ///   - urlString: API URL that will be fetched
     ///   - completion: Returned value after trying to fetch the API
