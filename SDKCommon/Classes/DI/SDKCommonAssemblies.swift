@@ -10,7 +10,6 @@ import Foundation
 public enum SDKCommonAssemblies {
     public static func register() {
         AppAssembler.apply(SDKCommonRegistration())
-        AppAssembler.resolve(HTTPRequestProtocol.self)
     }
 }
 
