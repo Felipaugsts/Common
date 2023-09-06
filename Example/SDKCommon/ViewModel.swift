@@ -14,12 +14,18 @@ protocol viewModelProtocol: AnyObject {
     var backgroundColor: PublishRelay<UIColor> { get }
 }
 
-public struct location: Decodable {
-    var results: [residents]
+struct Location: Codable {
+    let id: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+    }
 }
-public struct residents: Decodable {
-    var id: Int
+
+struct LocationResponse: Codable {
+    let results: [Location]
 }
+
 
 class ViewModel: viewModelProtocol {
     var backgroundColor = PublishRelay<UIColor>()
@@ -38,14 +44,40 @@ class ViewModel: viewModelProtocol {
 
     func fetchData() {
         guard let fileUrl = URL(string: "https://rickandmortyapi.com/api/location") else { return }
-        httpRequest?.fetch(url: fileUrl ) { (result: Result<location, Error>) in
+        httpRequest?.fetch(url: fileUrl ) { (result: Result<LocationResponse, Error>) in
             switch result {
             case .success(let success):
-                print(success)
+                print("success", success.results)
             case .failure(let failure):
-                print(failure)
+                print("failure", failure)
             }
         }
     }
+    
+    func fetchServiceProdiver() {
+        let service = ServiceProvider()
+        service.configureBaseURL(url: "https://rickandmortyapi.com/api/")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let provider = MortyProvider()
+            service.makeAPIRequest(LocationResponse.self, using: provider)  { response in
+                switch response {
+                case .success(let success):
+                    print("success", success.results)
+                case .failure(let failure):
+                    print("failure", failure)
+                }
+            }
+        }
+    }
+}
+
+struct MortyProvider: APIRequestProvider {
+    var isPublic: Bool = false
+    var module: String = ""
+    var path: String = "location"
+    var httpMethod: SDKCommon.RequestHTTPMethod = .get
+    var body: [String : Any] = [:]
+    var headers: [String : String] = [:]
 }
 

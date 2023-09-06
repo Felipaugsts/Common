@@ -12,4 +12,10 @@ Pod::Spec.new do |s|
   s.source_files = 'SDKCommon/Classes/**/*'
   s.dependency 'SwinjectAutoregistration'
   s.dependency 'Swinject'
+  s.dependency 'Firebase/Auth'
+  s.dependency 'Firebase/Firestore'
+  s.dependency 'Firebase/Core'
+  s.dependency 'FirebaseFirestoreSwift', '> 7.0-beta'
+  s.dependency 'KeychainSwift', '20.0.0'
+  
 end
