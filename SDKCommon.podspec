@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SDKCommon'
-  s.version          = '0.0.5'
+  s.version          = '0.0.6'
   s.summary          = 'A short description of SDKCommon.'
   s.homepage         = 'https://github.com/Felipaugsts/Common'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

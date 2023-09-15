@@ -19,11 +19,5 @@ public enum RequestHTTPMethod: String {
 }
 
 public enum APIError: Error {
-    case badURL
-    case requestFailed(statusCode: Int, reason: String, response: HTTPURLResponse?, data: Any?)
-    case mappingError
-    case tokenError
-    case noConnection
-    case customError(statusCode: Int, result: Any?)
-    case unknown
+    case badURL, requestFailed(_ statusCode: Int, _ reason: String, _ response: HTTPURLResponse?, _ data: Any?), mappingError, tokenError, noConnection, customError(statusCode: Int, result: Any?), unknown
 }

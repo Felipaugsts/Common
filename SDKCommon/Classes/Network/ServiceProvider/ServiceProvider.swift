@@ -87,7 +87,7 @@ public class ServiceProvider: ServiceProviderProtocol {
             if let error = error {
                 let failureReason = error.localizedDescription
                 let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-                completionHandler(.failure(.requestFailed(statusCode: statusCode, reason: failureReason, response: response as? HTTPURLResponse, data: nil)))
+                completionHandler(.failure(.requestFailed(statusCode, failureReason, response as? HTTPURLResponse, nil)))
                 return
             }
 

@@ -9,7 +9,7 @@ import Foundation
 import FirebaseAuth
 
 public protocol AuthServiceLogic {
-    func authenticate(with email: String, password: String, completion: @escaping (Void?, Error?) -> Void)
+    func authenticate(with email: String, password: String, completion: @escaping (Void?, APIError?) -> Void)
     func isUserAuthenticated() -> Bool
     func updateUserEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void)
     func updateUserPassword(_ password: String, completion: @escaping (Void?, Error?) -> Void)
@@ -23,25 +23,35 @@ public class AuthService: AuthServiceLogic {
     
     // MARK: - Authenticate
     
-    public func authenticate(with email: String, password: String, completion: @escaping (Void?, Error?) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { AuthDataResult, Error in
-            if Error != nil {
-                completion(nil, Error)
-            } else if AuthDataResult != nil {
+    public func authenticate(with email: String, password: String, completion: @escaping (Void?, APIError?) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            if let error = error as NSError? {
+                let errorCode = error._code
                 
-                let resp = AuthDataResult?.user
-                
+                switch errorCode {
+                case AuthErrorCode.wrongPassword.rawValue:
+                    completion(nil, .customError(statusCode: 403, result: nil)) // Wrong password
+                case AuthErrorCode.userNotFound.rawValue:
+                    completion(nil, .customError(statusCode: 404, result: nil)) // User not found
+                default:
+                    completion(nil, .unknown)
+                }
+            } else if let authResult = authResult {
+                // Authentication succeeded, process the result
+                let resp = authResult.user
+
                 var user = User()
-                user.email = resp?.email
-                user.name = resp?.displayName
-                user.userUID = resp?.uid
-                
+                user.email = resp.email
+                user.name = resp.displayName
+                user.userUID = resp.uid
+
                 UserRepository.shared.user = user
-                
+
                 completion((), nil)
             }
         }
     }
+
     
     // MARK: - Is Authenticated
     
