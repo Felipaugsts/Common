@@ -12,9 +12,11 @@ public protocol AuthServiceLogic {
     func authenticate(with email: String, password: String, completion: @escaping (Void?, APIError?) -> Void)
     func isUserAuthenticated() -> Bool
     func updateUserEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void)
+    func updateUsername(_ name: String, completion: @escaping (Void?, Error?) -> Void)
     func updateUserPassword(_ password: String, completion: @escaping (Void?, Error?) -> Void)
     func sendPasswordResetEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void)
     func logout(_ completion: @escaping (Void?, Error?) -> Void)
+    func createAccount(email: String, password: String, completion: @escaping (Void?, Error?) -> Void)
 }
 
 public class AuthService: AuthServiceLogic {
@@ -71,6 +73,7 @@ public class AuthService: AuthServiceLogic {
     public func updateUserEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void) {
         Auth.auth().currentUser?.updateEmail(to: email) { error in
             if error != nil {
+                print(error?.localizedDescription ?? "")
                 completion(nil, error)
                 return
             }
@@ -79,11 +82,27 @@ public class AuthService: AuthServiceLogic {
         }
     }
     
+    // MARK: - Update User Name
+    
+    public func updateUsername(_ name: String, completion: @escaping (Void?, Error?) -> Void) {
+        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+        changeRequest?.displayName = name
+        changeRequest?.commitChanges { Error in
+            guard let error = Error else {
+                
+                completion((), nil)
+                return
+            }
+            completion(nil, error)
+        }
+    }
+    
     // MARK: - Update User Password
     
     public func updateUserPassword(_ password: String, completion: @escaping (Void?, Error?) -> Void) {
         Auth.auth().currentUser?.updatePassword(to: password) { error in
             if error != nil {
+                print(error?.localizedDescription ?? "")
                 completion(nil, error)
                 return
             }
@@ -97,6 +116,7 @@ public class AuthService: AuthServiceLogic {
     public func sendPasswordResetEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void) {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if error != nil {
+                print(error?.localizedDescription ?? "")
                 completion(nil, error)
                 return
             }
@@ -127,6 +147,19 @@ public class AuthService: AuthServiceLogic {
             } else {
                 completion((), nil)
             }
+        }
+    }
+    
+    // MARK: - Create User
+    
+    public func createAccount(email: String, password: String, completion: @escaping (Void?, Error?) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            guard let user = authResult?.user, error == nil else {
+                completion(nil, error)
+                return
+            }
+            print("\(String(describing: user.email)) created")
+            completion((), nil)
         }
     }
 }
