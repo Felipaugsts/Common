@@ -15,6 +15,7 @@ help:
 setup:
 ifndef XCPRETTY
 	gem install xcpretty
+	pod install --repo-update
 endif
 ifndef JQ
 	brew install jq
@@ -24,7 +25,7 @@ ifndef SONAR_SCANNER
 endif
 
 install:
-	pod install --project-directory=Example/ --repo-update
+	xcodegen generate
 
 open:
 	open Example/SDKCommon.xcworkspace

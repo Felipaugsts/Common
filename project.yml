@@ -1,0 +1,12 @@
+name: SDKCommon
+options:
+  deploymentTarget:
+  iOS: "13.0"
+targets:
+  SDKCommon:
+    type: application
+    platform: iOS
+    deploymentTarget: "13.0"
+sources: [SDKCommon]
+dependencies:
+- package: Networking

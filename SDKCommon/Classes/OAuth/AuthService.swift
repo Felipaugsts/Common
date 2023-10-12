@@ -16,7 +16,7 @@ public protocol AuthServiceLogic {
     func updateUserPassword(_ password: String, completion: @escaping (Void?, Error?) -> Void)
     func sendPasswordResetEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void)
     func logout(_ completion: @escaping (Void?, Error?) -> Void)
-    func createAccount(email: String, password: String, completion: @escaping (Void?, Error?) -> Void)
+    func createAccount(email: String, password: String, completion: @escaping (Void?, APIError?) -> Void)
 }
 
 public class AuthService: AuthServiceLogic {
@@ -152,14 +152,23 @@ public class AuthService: AuthServiceLogic {
     
     // MARK: - Create User
     
-    public func createAccount(email: String, password: String, completion: @escaping (Void?, Error?) -> Void) {
+    public func createAccount(email: String, password: String, completion: @escaping (Void?, APIError?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-            guard let user = authResult?.user, error == nil else {
-                completion(nil, error)
-                return
+            if let error = error as NSError? {
+                let errorCode = error._code
+                
+                switch errorCode {
+                case AuthErrorCode.emailAlreadyInUse.rawValue:
+                    completion(nil, .customError(statusCode: 403, result: nil)) // Email in use
+                case AuthErrorCode.invalidEmail.rawValue, AuthErrorCode.missingEmail.rawValue:
+                    completion(nil, .customError(statusCode: 400, result: nil)) // Invalid Email
+                default:
+                    completion(nil, .unknown)
+                }
+            } else if let user = authResult?.user {
+                print("\(String(describing: user.email)) created")
+                completion((), nil)
             }
-            print("\(String(describing: user.email)) created")
-            completion((), nil)
         }
     }
 }
