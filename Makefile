@@ -15,7 +15,6 @@ help:
 setup:
 ifndef XCPRETTY
 	gem install xcpretty
-	pod install --repo-update
 endif
 ifndef JQ
 	brew install jq

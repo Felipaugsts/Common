@@ -34,7 +34,7 @@ public class PanIconButton: UIButton, Themeable {
     
     public var theme: PanTheme = .white {
         didSet {
-            self.tintColor = theme == .white ? DSColor.black : DSColor.white
+            self.tintColor = theme == .white ? DSColor.lightest : DSColor.darkest
             setTheme()
         }
     }
@@ -113,6 +113,7 @@ public class PanIconButton: UIButton, Themeable {
             case .green:
                 backgroundColor = isPressed ? DSColor.positiveDark : (isBackgroundClear ? .clear : DSColor.positive)
             case .white:
+                tintColor = isPressed ? DSColor.darkest : DSColor.lightest
                 backgroundColor = isPressed ? DSColor.lightest : (isBackgroundClear ? .clear : DSColor.white)
             }
         

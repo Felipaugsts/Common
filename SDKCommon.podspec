@@ -10,14 +10,16 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '13.0'
 
   s.source_files = 'SDKCommon/Classes/**/*'
+  s.vendored_frameworks = 'Path/To/Firebase/ModuleMaps'
+  
   s.dependency 'SwinjectAutoregistration'
   s.dependency 'Swinject'
-  s.dependency 'Firebase/Auth'
-  s.dependency 'Firebase/Firestore'
-  s.dependency 'Firebase/Core'
-  s.dependency 'FirebaseFirestoreSwift', '> 7.0-beta'
   s.dependency 'KeychainSwift', '20.0.0'
   s.dependency 'lottie-ios'
   s.dependency  'SnapKit'
+  s.dependency  'SDWebImage'
 
+  s.dependency 'Firebase/Auth'
+  s.dependency 'Firebase/Firestore'
+  s.dependency 'Firebase/Core'
 end

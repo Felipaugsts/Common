@@ -13,7 +13,7 @@ extension UIViewController {
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
-
+    
     @objc
     private func dismissKeyboard(sender: UITapGestureRecognizer) {
         let tapLocation = sender.location(in: view)
@@ -22,6 +22,17 @@ extension UIViewController {
         let tappedView = view.hitTest(tapLocation, with: nil)
         if !(tappedView is UITextField) && !(tappedView is UIButton) {
             view.endEditing(true)
+        }
+    }
+    
+    public func dismissOrPop(animated: Bool = true) {
+        if let presentingVC = presentingViewController {
+            presentingVC.dismiss(animated: animated, completion: nil)
+        } else if let navigationController = navigationController {
+            navigationController.popViewController(animated: animated)
+        } else {
+            // If neither presenting nor in a navigation stack, just dismiss self
+            dismiss(animated: animated, completion: nil)
         }
     }
 }

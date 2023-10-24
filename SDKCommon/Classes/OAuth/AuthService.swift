@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
 
 public protocol AuthServiceLogic {
     func authenticate(with email: String, password: String, completion: @escaping (Void?, APIError?) -> Void)
@@ -17,11 +18,17 @@ public protocol AuthServiceLogic {
     func sendPasswordResetEmail(_ email: String, completion: @escaping (Void?, Error?) -> Void)
     func logout(_ completion: @escaping (Void?, Error?) -> Void)
     func createAccount(email: String, password: String, completion: @escaping (Void?, APIError?) -> Void)
+    func getCurrentUser() -> CurrentUser?
+    func createFirestoreDocument<T: Encodable>(collectionName: String, documentID: String, data: T, completion: @escaping (Result<Void, Error>) -> Void)
+    func getFirestoreDocument<T: Decodable>(_ collectionName: String, documentID: String, objectType: T.Type, completion: @escaping (Result<T, Error>) -> Void)
+    func saveUserData(completion: @escaping (Bool) -> Void)
 }
 
 public class AuthService: AuthServiceLogic {
     
     public init() { }
+    
+    public let db = Firestore.firestore()
     
     // MARK: - Authenticate
     
@@ -38,22 +45,44 @@ public class AuthService: AuthServiceLogic {
                 default:
                     completion(nil, .unknown)
                 }
-            } else if let authResult = authResult {
-                // Authentication succeeded, process the result
-                let resp = authResult.user
-
-                var user = User()
-                user.email = resp.email
-                user.name = resp.displayName
-                user.userUID = resp.uid
-
-                UserRepository.shared.user = user
-
-                completion((), nil)
+            } else if authResult != nil {
+                self.saveUserData { _ in
+                    completion((), nil)
+                }
             }
         }
     }
 
+    
+    // MARK: - Get current User
+    
+    public func getCurrentUser() -> CurrentUser? {
+        let user = Auth.auth().currentUser
+        
+        guard user != nil else {
+            return nil
+        }
+        return CurrentUser(uid: user?.uid, username: user?.displayName, email: user?.email)
+    }
+    
+    public func saveUserData(completion: @escaping (Bool) -> Void) {
+        guard let userID = getCurrentUser()?.uid else {
+            completion(false)
+            return
+        }
+        let userCollection = db.collection("Users").document(userID)
+                
+        getFirestoreDocument("Users", documentID: userID, objectType: User.self) { userResponse in
+            switch userResponse {
+            case .success(let userResult):
+                var user = userResult
+                UserRepository.shared.user = user
+                completion(true)
+            case .failure:
+                completion(false) // Notify the caller that the operation failed
+            }
+        }
+    }
     
     // MARK: - Is Authenticated
     
@@ -79,21 +108,6 @@ public class AuthService: AuthServiceLogic {
             }
             
             completion((), nil)
-        }
-    }
-    
-    // MARK: - Update User Name
-    
-    public func updateUsername(_ name: String, completion: @escaping (Void?, Error?) -> Void) {
-        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-        changeRequest?.displayName = name
-        changeRequest?.commitChanges { Error in
-            guard let error = Error else {
-                
-                completion((), nil)
-                return
-            }
-            completion(nil, error)
         }
     }
     
@@ -124,6 +138,8 @@ public class AuthService: AuthServiceLogic {
             completion((), nil)
         }
     }
+    
+    // MARK: - Logout
     
     public func logout(_ completion: @escaping (Void?, Error?) -> Void) {
         do {
@@ -171,4 +187,25 @@ public class AuthService: AuthServiceLogic {
             }
         }
     }
+    
+    // MARK: - Update User Name
+    
+    public func updateUsername(_ name: String, completion: @escaping (Void?, Error?) -> Void) {
+        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+        changeRequest?.displayName = name
+        changeRequest?.commitChanges { Error in
+            guard let error = Error else {
+                
+                completion((), nil)
+                return
+            }
+            completion(nil, error)
+        }
+    }
+}
+
+public struct CurrentUser {
+    public var uid: String?
+    public var username: String?
+    public var email: String?
 }

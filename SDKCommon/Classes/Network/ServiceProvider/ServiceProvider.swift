@@ -37,7 +37,7 @@ public protocol ServiceProviderProtocol {
 // MARK: - Service Provider Implementation
 
 public class ServiceProvider: ServiceProviderProtocol {
-    private var baseURL: URL?
+    private var baseURL: String?
 
     public static var shared: ServiceProviderProtocol = {
         ServiceProvider()
@@ -48,30 +48,30 @@ public class ServiceProvider: ServiceProviderProtocol {
     // MARK: - Public Methods
     
     public func configureBaseURL(url: String) {
-        if let configuredURL = URL(string: url) {
-            baseURL = configuredURL
+        guard let _ = URL(string: url) else {
+            print("Couldn't configure BASE URL: \(url)")
             return
         }
-        
-        print("Couldn't configure BASE URL: \(url)")
+        baseURL = url
     }
-
+    
     public func makeAPIRequest<T: Decodable>(_ model: T.Type, using provider: RequestProvider, completionHandler: @escaping (Result<T, APIError>) -> Void) {
-        guard let baseURL = baseURL else {
+        
+        guard let baseURL = baseURL,
+              let fullURL = URL(string: baseURL + provider.module + provider.path) else {
             completionHandler(.failure(.badURL))
             return
         }
-
-        // Create the full URL by combining the base URL, module, and path.
-        let fullURL = baseURL.appendingPathComponent(provider.module + provider.path)
-
-        // Create an HTTP request.
+        
         var request = URLRequest(url: fullURL)
+        
         request.httpMethod = provider.httpMethod.rawValue
-
+        
         // Configure headers from the provider.
         configureHeaders(for: provider.headers, in: &request)
 
+        print("endpoint:", fullURL, "hearders", request)
+        
         // Set the request body for POST requests.
         if provider.httpMethod == .post {
             do {

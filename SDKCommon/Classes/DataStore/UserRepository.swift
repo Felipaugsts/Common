@@ -20,13 +20,15 @@ final public class UserRepository: UserDataSource {
     
     private var userDefaults: UserDefaults
     private var keychain: KeychainSwift
-    
+    private var service: AuthServiceLogic
     private let userDataKey = "userData"
     
     public init(userDefaults: UserDefaults = UserDefaults.standard,
-         keychain: KeychainSwift = KeychainSwift()) {
+                keychain: KeychainSwift = KeychainSwift(),
+                service: AuthServiceLogic = AuthService()) {
         self.userDefaults = userDefaults
         self.keychain = keychain
+        self.service = service
     }
     
     public var user: User? {
@@ -56,6 +58,10 @@ final public class UserRepository: UserDataSource {
     public func deleteUser() {
         UserDefaults.standard.removeObject(forKey: "user")
     }
+    
+    public func getUserBudget() {
+        
+    }
 }
 
 public struct User: Codable {
@@ -63,4 +69,63 @@ public struct User: Codable {
     public var name: String?
     public var email: String?
     public var userUID: String?
+    public var budget: YearBudget? = nil
+}
+
+public struct YearBudget: Codable {
+    public let year: Int
+    public let yearBudget: [MonthData]
+    
+    public init(year: Int, yearBudget: [MonthData]) {
+        self.year = year
+        self.yearBudget = yearBudget
+    }
+}
+
+public struct MonthData: Codable {
+    public var month: String?
+    public var incoming: [IncomingData]
+    public var expenses: [ExpenseData]
+    
+    public init(month: String, incoming: [IncomingData], expenses: [ExpenseData]) {
+        self.month = month
+        self.incoming = incoming
+        self.expenses = expenses
+    }
+}
+
+public struct IncomingData: Codable {
+    public var totalIncoming: Int?
+    public var people: [PersonData]
+    
+    public init(totalIncoming: Int, people: [PersonData]) {
+        self.totalIncoming = totalIncoming
+        self.people = people
+    }
+}
+
+public struct PersonData: Codable {
+    public var personId: Int?
+    public var name: String?
+    public var value: Int?
+    
+    public init(personId: Int, name: String, value: Int) {
+        self.personId = personId
+        self.name = name
+        self.value = value
+    }
+}
+
+public struct ExpenseData: Codable {
+    var totalExpenses: Int?
+    var creditCards: [Int]?
+    var house: [Int]?
+    var education: [Int]?
+    
+    public init(totalExpenses: Int, creditCards: [Int], house: [Int], education: [Int]) {
+        self.totalExpenses = totalExpenses
+        self.creditCards = creditCards
+        self.house = house
+        self.education = education
+    }
 }
