@@ -10,8 +10,11 @@ import KeychainSwift
 
 public protocol UserDataSource {
     var user: User? { get set }
+    var apiToken: String? { get set }
     
     func deleteUser()
+    func addToUserDefaults<T: Codable>(_ data: T, forKey key: String)
+    func retrieveFromUserDefaults<T: Codable>(forKey key: String) -> T?
 }
 
 final public class UserRepository: UserDataSource {
@@ -20,15 +23,33 @@ final public class UserRepository: UserDataSource {
     
     private var userDefaults: UserDefaults
     private var keychain: KeychainSwift
-    private var service: AuthServiceLogic
     private let userDataKey = "userData"
     
     public init(userDefaults: UserDefaults = UserDefaults.standard,
-                keychain: KeychainSwift = KeychainSwift(),
-                service: AuthServiceLogic = AuthService()) {
+                keychain: KeychainSwift = KeychainSwift()) {
         self.userDefaults = userDefaults
         self.keychain = keychain
-        self.service = service
+    }
+    
+    public var apiToken: String? {
+        get {
+            return retrieveTokenFromKeychain()
+        }
+        set {
+            updateTokenInKeychain(with: newValue)
+        }
+    }
+
+    private func retrieveTokenFromKeychain() -> String? {
+        return keychain.get("apiToken")
+    }
+
+    private func updateTokenInKeychain(with token: String?) {
+        guard let newToken = token else {
+            keychain.delete("apiToken")
+            return
+        }
+        keychain.set(newToken, forKey: "apiToken")
     }
     
     public var user: User? {
@@ -59,9 +80,23 @@ final public class UserRepository: UserDataSource {
         UserDefaults.standard.removeObject(forKey: "user")
     }
     
-    public func getUserBudget() {
-        
+    public func addToUserDefaults<T: Codable>(_ data: T, forKey key: String) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(data) {
+            UserDefaults.standard.set(encoded, forKey: key)
+        }
     }
+    
+    public func retrieveFromUserDefaults<T: Codable>(forKey key: String) -> T? {
+        if let storedData = UserDefaults.standard.data(forKey: key) {
+            let decoder = JSONDecoder()
+            if let decoded = try? decoder.decode(T.self, from: storedData) {
+                return decoded
+            }
+        }
+        return nil
+    }
+
 }
 
 public struct User: Codable {
@@ -69,63 +104,4 @@ public struct User: Codable {
     public var name: String?
     public var email: String?
     public var userUID: String?
-    public var budget: YearBudget? = nil
-}
-
-public struct YearBudget: Codable {
-    public let year: Int
-    public let yearBudget: [MonthData]
-    
-    public init(year: Int, yearBudget: [MonthData]) {
-        self.year = year
-        self.yearBudget = yearBudget
-    }
-}
-
-public struct MonthData: Codable {
-    public var month: String?
-    public var incoming: [IncomingData]
-    public var expenses: [ExpenseData]
-    
-    public init(month: String, incoming: [IncomingData], expenses: [ExpenseData]) {
-        self.month = month
-        self.incoming = incoming
-        self.expenses = expenses
-    }
-}
-
-public struct IncomingData: Codable {
-    public var totalIncoming: Int?
-    public var people: [PersonData]
-    
-    public init(totalIncoming: Int, people: [PersonData]) {
-        self.totalIncoming = totalIncoming
-        self.people = people
-    }
-}
-
-public struct PersonData: Codable {
-    public var personId: Int?
-    public var name: String?
-    public var value: Int?
-    
-    public init(personId: Int, name: String, value: Int) {
-        self.personId = personId
-        self.name = name
-        self.value = value
-    }
-}
-
-public struct ExpenseData: Codable {
-    var totalExpenses: Int?
-    var creditCards: [Int]?
-    var house: [Int]?
-    var education: [Int]?
-    
-    public init(totalExpenses: Int, creditCards: [Int], house: [Int], education: [Int]) {
-        self.totalExpenses = totalExpenses
-        self.creditCards = creditCards
-        self.house = house
-        self.education = education
-    }
 }

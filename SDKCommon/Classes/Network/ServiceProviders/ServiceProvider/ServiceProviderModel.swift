@@ -19,5 +19,7 @@ public enum RequestHTTPMethod: String {
 }
 
 public enum APIError: Error {
+    case invalidResponse
+    case invalidData
     case badURL, requestFailed(_ statusCode: Int, _ reason: String, _ response: HTTPURLResponse?, _ data: Any?), mappingError, tokenError, noConnection, customError(statusCode: Int, result: Any?), unknown
 }

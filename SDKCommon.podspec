@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.dependency  'SnapKit'
   s.dependency  'SDWebImage'
 
-  s.dependency 'Firebase/Auth'
-  s.dependency 'Firebase/Firestore'
-  s.dependency 'Firebase/Core'
+  # s.dependency 'Firebase/Auth'
+  # s.dependency 'Firebase/Firestore'
+  # s.dependency 'Firebase/Core'
 end
